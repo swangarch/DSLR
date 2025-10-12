@@ -1,14 +1,13 @@
-from utils.logregClass import logreg, save_weights
-from utils.train_utils import count_correct
+from utils.logregClass import Logreg
+from utils.train_utils import count_correct, save_weights
 import numpy as np
 import pandas as pd
 from datetime import datetime
 import os
 
 
-class logregall:
+class MultiCategoryClassifier:
     """logistic regression for training all features"""
-
 
     def __init__(self, df, feature_names, classname, goals):
         """Init logistic regression for all features"""
@@ -19,27 +18,28 @@ class logregall:
         self.goals = goals
         self.classname = classname
         for goal in self.goals:
-            self.lgs.append(logreg(self.df, self.feature_names, self.classname, goal))
+            self.lgs.append(Logreg(self.df, self.feature_names, self.classname, goal))
         
         self.weights = []
-        print("[initialization done]\n")
+        print("[Initialization done]\n")
 
-
-    def train_all(self, learning_rate=0.00005, max_iter=10000, Debug=False):
+    def train_all(self, learning_rate=0.00005, max_iter=10000, batch_size=100):
         """Train models for all class, save weights for classifcation."""
 
+        if learning_rate <= 0 or max_iter <= 0 or batch_size < 1:
+            raise ValueError("Wrong training parameters.")
+        print("[Training start] =>", "<SGD>" if batch_size == 1 else "<mini batch> " + str(batch_size))
         startTime = datetime.now()
         for i, goal in enumerate(self.goals):
-            weights = self.lgs[i].train(learning_rate, max_iter, Debug)
+            weights = self.lgs[i].train(learning_rate, max_iter, batch_size)
             self.weights.append(weights.flatten())
 
-        print(f"\033[031m[TOTAL TRAINING TIME] {datetime.now() - startTime}\033[0m")
+        print(f"\033[031m[TOTAL training time] {datetime.now() - startTime}\033[0m")
         os.makedirs("output", exist_ok=True)
         save_weights(np.array(self.weights), "output/weights.csv")
         print("[weghts.csv save at output/weights.csv]")
-        
 
-    def predict(self, df_test): #### issue
+    def predict(self, df_test):
         """Predict for test dataset."""
 
         if len(df_test) == 0:
@@ -52,8 +52,7 @@ class logregall:
         index = np.argmax(np.stack(predictions), axis=0)
         final = np.array([self.goals[i] for i in index])
         truth = np.array(df_test[self.classname])
-        print(count_correct("TEST FINAL", final, truth, False))
-
+        print(count_correct("[Test final]", final, truth, False))
 
     def predict_new(self, df_new):
         """Predict for a new dataset."""
@@ -69,13 +68,12 @@ class logregall:
         final = [[count, self.goals[i]] for count, i in enumerate(index)]
         df = pd.DataFrame(final, columns=["Index", "Hogwarts House"])
         os.makedirs("output", exist_ok=True)
-        df.to_csv("output/house.csv", index=False)
-        print("[Prediction saved at output/house.csv]")
-
+        df.to_csv("output/houses.csv", index=False)
+        print("[Prediction saved at output/houses.csv]")
 
     def load_weights(self, path):
         """Load weights from file."""
 
         self.weights = np.loadtxt(path, delimiter=",", dtype=float).tolist()
-        print("[WEIGHTS LOADED]")
-        print(self.weights)
+        print("[Weights loaded]")
+

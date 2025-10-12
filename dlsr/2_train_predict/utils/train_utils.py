@@ -28,7 +28,7 @@ def sigmoid(arr:array) -> array:
 	return 1.0 / (1 + np.e ** (-arr))
 
 
-def prob_predict(weight:array, fnorm:array, length: int) -> array:
+def prob_predict(weight:array, fnorm:array) -> array:
 	"""Calculate the training prediction"""
 
 	return sigmoid(weight @ fnorm)
@@ -53,16 +53,17 @@ def count_correct(title:str, prediction:array, truth: array, has_loss: bool) -> 
 	"""Count prediction truth"""
 
 	count = 0
-	length = len(truth)
+	t = truth.flatten()
+	length = len(t)
 	p = prediction.flatten()
-	for i, num in enumerate(truth):
+	for i, num in enumerate(t):
 		if (num == p[i]):
 			count += 1
 	if has_loss:
 		loss = cross_entropy_loss(prediction, truth)
-		return f"\033[33m{title} <CORRECT> {count}/{length}   <RATE> {count / float(length) * 100:2f}%   <Loss> {loss:.4f}\033[0m"
+		return f"\033[33m{title} <Correct> {count}/{length}   <Accuracy> {count / float(length) * 100:2f}%   <Loss> {loss:.4f}\033[0m"
 	else:
-		return f"\033[33m{title} <CORRECT> {count}/{length}   <RATE> {count / float(length) * 100:2f}%\033[0m"
+		return f"\033[33m{title} <Correct> {count}/{length}   <Accuracy> {count / float(length) * 100:2f}%\033[0m"
 
 
 def clean_data(df: dataframe, method:str="dropnan") -> dataframe:
@@ -86,3 +87,13 @@ def split_data(df: dataframe, frac=0.8, seed=412) -> tuple:
 	train_df = df.sample(frac=frac, random_state=seed)
 	test_df = df.drop(train_df.index)
 	return train_df, test_df
+
+
+def save_weights(weight: array, path:str) -> None:
+    """Save the weights."""
+
+    try:
+        np.savetxt(path, weight, delimiter=",", fmt="%f")
+    
+    except Exception as e:
+        print("Error:", e)
