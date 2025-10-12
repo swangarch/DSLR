@@ -10,7 +10,7 @@ from utils.train_utils import clean_data, split_data
 def main():
 	"""Main to load dataset and train."""
 
-	try: 
+	try:
 		print("\033[33mUsage: python3 logreg_predict.py <train_set_csv> <test_set_csv> <weights.csv>\033[0m")
 		argv = sys.argv
 		assert len(argv) == 4, "Wrong argument number."
@@ -22,13 +22,13 @@ def main():
 		
 		feature_names = [
 						"Astronomy", "Herbology", 
-						 "Arithmancy", 
+							"Arithmancy", 
 						"Charms", 
 						"Divination", "Ancient Runes",
 						"Defense Against the Dark Arts",
 						"Muggle Studies", "History of Magic",
 						"Transfiguration", 
-						 "Potions", "Care of Magical Creatures",
+							"Potions", "Care of Magical Creatures",
 						"Flying",
 						]
 

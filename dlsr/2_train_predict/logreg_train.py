@@ -22,13 +22,13 @@ def main():
 		
 		feature_names = [
 						"Astronomy", "Herbology", 
-					 "Arithmancy", 
+						"Arithmancy", 
 						"Charms", 
 						"Divination", "Ancient Runes",
 						"Defense Against the Dark Arts",
 						"Muggle Studies", "History of Magic",
 						"Transfiguration", 
-					 "Potions", "Care of Magical Creatures",
+						"Potions", "Care of Magical Creatures",
 						"Flying",
 					]
 		
@@ -37,7 +37,7 @@ def main():
 
 		lgall = logregall(df, feature_names, classname, goals)
 		lgall.train_all()
-		lgall.predict_test(df_test)
+		lgall.predict(df_test)
 	
 	except KeyboardInterrupt:
 		print("\033[33mStopped by user.\033[0m")

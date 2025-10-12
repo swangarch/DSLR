@@ -15,7 +15,12 @@ def normalize(li: array, range: tuple) -> array:
 def cross_entropy_loss(predict:array, truth:array) -> None:
 	"""Calculate the loss"""
 
-	pass
+	p = predict.flatten()
+	eps = 1e-12
+	p = np.clip(p, eps, 1-eps)
+	loss = -np.mean(truth * np.log(p) + (1 - truth) * np.log(1 - p))
+	return loss
+
 
 def sigmoid(arr:array) -> array:
 	"""Apply sigmoid to data"""
@@ -23,14 +28,10 @@ def sigmoid(arr:array) -> array:
 	return 1.0 / (1 + np.e ** (-arr))
 
 
-def prob_predict(weight:array, fnorm:list, length: int) -> array:
+def prob_predict(weight:array, fnorm:array, length: int) -> array:
 	"""Calculate the training prediction"""
 
-	res = np.zeros(length, dtype=np.float32)
-	for i, f in enumerate(fnorm):
-		res += weight[i + 1] * f
-	res += weight[0]
-	return sigmoid(res)
+	return sigmoid(weight @ fnorm)
 
 
 def preproc_onevsall(arr:array, catName: str) -> array:
@@ -39,31 +40,29 @@ def preproc_onevsall(arr:array, catName: str) -> array:
 	return np.array([1 if h == catName else 0 for h in arr])
 
 
-def cal_grad(prediction: array, groundTruth: array, features: list, weight:array) -> array:
+def cal_grad(prediction: array, groundTruth: array, features: array, weight:array) -> array:
 	"""Calculate the gradient of loss to weight"""
 
-	diff = prediction - groundTruth
 	length = len(weight)
-	gradient = np.zeros(length, dtype=np.float32)
-	for i in range(length):
-		if i == 0: #bias
-			gradient[i] = (np.nansum(diff) / length)
-		else: #weights
-			gradient[i] = (np.nansum(diff * features[i - 1]) / length)
-
+	diff = (prediction - groundTruth) / length
+	gradient = diff @ features.T
 	return gradient
 
 
-def count_correct(title:str, prediction:array, truth: array) -> str:
+def count_correct(title:str, prediction:array, truth: array, has_loss: bool) -> str:
 	"""Count prediction truth"""
 
 	count = 0
 	length = len(truth)
+	p = prediction.flatten()
 	for i, num in enumerate(truth):
-		if (num == prediction[i]):
+		if (num == p[i]):
 			count += 1
-
-	return f"\033[33m{title} <CORRECT> {count}/{length}   <RATE> {count / float(length) * 100:2f}%\033[0m"
+	if has_loss:
+		loss = cross_entropy_loss(prediction, truth)
+		return f"\033[33m{title} <CORRECT> {count}/{length}   <RATE> {count / float(length) * 100:2f}%   <Loss> {loss:.4f}\033[0m"
+	else:
+		return f"\033[33m{title} <CORRECT> {count}/{length}   <RATE> {count / float(length) * 100:2f}%\033[0m"
 
 
 def clean_data(df: dataframe, method:str="dropnan") -> dataframe:
