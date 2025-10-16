@@ -53,7 +53,6 @@ def pair_plot(data: pd.DataFrame, types_color:list, subdfs_map:map, color_map:ma
 
 			row = (count - 1) // num_features
 			col = (count - 1) % num_features
-			# put col row label
 			if col == 0:
 				plt.ylabel(f1, fontsize=10, rotation=0, ha="right")
 			if row == num_features - 1:
@@ -66,6 +65,7 @@ def main():
 	"""Program to visualize data."""
 
 	try:
+		plt.rcParams["figure.figsize"] = (25, 12)
 		print("\033[33mUsage: python3 pair_plot.py <path_csv>\033[0m")
 		argv = sys.argv
 		assert len(argv) == 2, "Wrong argument number."

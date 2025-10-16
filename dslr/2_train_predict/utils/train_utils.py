@@ -61,9 +61,9 @@ def count_correct(title:str, prediction:array, truth: array, has_loss: bool) -> 
 			count += 1
 	if has_loss:
 		loss = cross_entropy_loss(prediction, truth)
-		return f"\033[33m{title} <Correct> {count}/{length}   <Accuracy> {count / float(length) * 100:2f}%   <Loss> {loss:.4f}\033[0m"
+		return f"\033[32m{title} <Correct> {count}/{length}   <Accuracy> {count / float(length) * 100:2f}%   <Loss> {loss:.4f}\033[0m"
 	else:
-		return f"\033[33m{title} <Correct> {count}/{length}   <Accuracy> {count / float(length) * 100:2f}%\033[0m"
+		return f"\033[32m{title} <Correct> {count}/{length}   <Accuracy> {count / float(length) * 100:2f}%\033[0m"
 
 
 def clean_data(df: dataframe, method:str="dropnan") -> dataframe:

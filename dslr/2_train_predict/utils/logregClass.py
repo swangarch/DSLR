@@ -28,7 +28,7 @@ class Logreg:
         fnorms = [np.ones((1, len(catArr)))] #array list
 
         for i, f in enumerate(self.features):
-            self.ranges.append((float(min(f)), float(max(f)))) ##can we use?? min max save the rang
+            self.ranges.append((float(min(f)), float(max(f))))
             fnorms.append(normalize(f, self.ranges[i]))
         
         self.fnorms = np.vstack(fnorms)
@@ -71,7 +71,7 @@ class Logreg:
         ranges.insert(0, (0,1))
         fnorms = []
         features = [np.ones((1, l))]
-        for name in self.feature_names: # add check if length matched
+        for name in self.feature_names:
             features.append(np.array(df_test[name]))
         features = np.vstack(features)
         for i, f in enumerate(features):
@@ -86,7 +86,7 @@ class Logreg:
         ranges = self.ranges
         fnorms = [np.ones((1, len(df_test)))]
         features = []
-        for name in self.feature_names: # add check if length matched
+        for name in self.feature_names:
             features.append(np.array(df_test[name]))
         for i, f in enumerate(features):
             fnorms.append(normalize(f, ranges[i]))

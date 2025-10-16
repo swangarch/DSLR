@@ -23,7 +23,7 @@ class MultiCategoryClassifier:
         self.weights = []
         print("[Initialization done]\n")
 
-    def train_all(self, learning_rate=0.00005, max_iter=10000, batch_size=100):
+    def train_all(self, learning_rate:float=0.00005, max_iter:int=10000, batch_size:int=100) -> None:
         """Train models for all class, save weights for classifcation."""
 
         if learning_rate <= 0 or max_iter <= 0 or batch_size < 1:
@@ -34,12 +34,12 @@ class MultiCategoryClassifier:
             weights = self.lgs[i].train(learning_rate, max_iter, batch_size)
             self.weights.append(weights.flatten())
 
-        print(f"\033[031m[TOTAL training time] {datetime.now() - startTime}\033[0m")
+        print(f"\033[032m[TOTAL training time] {datetime.now() - startTime}\033[0m")
         os.makedirs("output", exist_ok=True)
         save_weights(np.array(self.weights), "output/weights.csv")
         print("[weghts.csv save at output/weights.csv]")
 
-    def predict(self, df_test):
+    def predict(self, df_test:pd.DataFrame) -> None:
         """Predict for test dataset."""
 
         if len(df_test) == 0:
@@ -54,7 +54,7 @@ class MultiCategoryClassifier:
         truth = np.array(df_test[self.classname])
         print(count_correct("[Test final]", final, truth, False))
 
-    def predict_new(self, df_new):
+    def predict_new(self, df_new:pd.DataFrame) -> None:
         """Predict for a new dataset."""
 
         if len(df_new) == 0:
@@ -71,7 +71,7 @@ class MultiCategoryClassifier:
         df.to_csv("output/houses.csv", index=False)
         print("[Prediction saved at output/houses.csv]")
 
-    def load_weights(self, path):
+    def load_weights(self, path:str) -> None:
         """Load weights from file."""
 
         self.weights = np.loadtxt(path, delimiter=",", dtype=float).tolist()
