@@ -2,8 +2,6 @@
 
 set -e
 
-# apt-get install python3-tk -y
-
 python3 -m venv venv
 
 source venv/bin/activate
