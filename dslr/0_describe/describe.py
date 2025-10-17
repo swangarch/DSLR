@@ -32,7 +32,7 @@ def ft_describe_one(series: pd.Series, title: str, all: dict) -> None:
     std = (err / count) ** 0.5
     min_num = cleanLi[0]
     max_num = cleanLi[-1]
-    percent25 = quartile(cleanLi, 0.24)
+    percent25 = quartile(cleanLi, 0.25)
     percent50 = quartile(cleanLi, 0.50)
     percent75 = quartile(cleanLi, 0.75)
 
@@ -84,8 +84,6 @@ def main():
  
         df_num = df.select_dtypes(include="number")
         ft_describe(df_num)
-        # additional_info(df)
-
 
     except KeyboardInterrupt:
         print("\033[33mStopped by user.\033[0m")
